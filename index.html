@@ -2,13 +2,13 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Daily Key</title>
+<title>TỦN KEY FREEr</title>
 
 <style>
 
 body{
   margin:0;
-  background: linear-gradient(135deg,#0f172a,#172554,#020617);
+  background: linear-gradient(135deg,#0f172a,#020617);
   font-family: Arial;
   min-height:100vh;
   display:flex;
@@ -29,41 +29,53 @@ body{
   z-index:1;
 }
 
-.card{
+/* Layout */
+.container{
   z-index:2;
-  background: rgba(255,255,255,0.09);
-  border:1px solid rgba(255,255,255,0.15);
-  padding:25px 35px;
-  border-radius:22px;
-  box-shadow:0 20px 40px rgba(0,0,0,0.35);
-  backdrop-filter: blur(12px);
-  text-align:center;
-  max-width:420px;
+  background: rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.18);
+  padding:25px;
+  border-radius:25px;
+  box-shadow:0 20px 50px rgba(0,0,0,0.4);
+  backdrop-filter: blur(14px);
+  max-width:850px;
+  width:90%;
 }
 
 .title{
-  font-size:24px;
-  margin-bottom:10px;
+  text-align:center;
+  font-size:28px;
+  margin-bottom:20px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+
+.card{
+  background: rgba(0,0,0,0.25);
+  border-radius:18px;
+  padding:18px;
+  box-shadow:0 15px 30px rgba(0,0,0,0.35);
+}
+
+.card h3{
+  margin:0 0 10px 0;
 }
 
 .keybox{
-  margin-top:15px;
-  font-size:28px;
+  font-size:22px;
   font-weight:bold;
-  padding:12px 15px;
-  background: rgba(0,0,0,0.25);
+  padding:10px;
+  background: rgba(0,0,0,0.35);
   border-radius:14px;
 }
 
-.alert{
-  margin-top:10px;
-  color:#ffbaba;
-}
-
-/* Button */
 button{
-  margin-top:15px;
-  padding:10px 18px;
+  margin-top:12px;
+  padding:9px 16px;
   border-radius:14px;
   border:none;
   cursor:pointer;
@@ -73,74 +85,119 @@ button{
   box-shadow:0 10px 20px rgba(0,0,0,0.25);
 }
 
-/* blur */
+.alert{
+  margin-top:8px;
+  color:#ffbaba;
+}
+
 .blur{
   filter:blur(6px);
 }
 
-/* Snow animation styles */
+@media(max-width:700px){
+  .grid{grid-template-columns:1fr}
+}
+
+
+/* Snow animation */
 @keyframes fall {
-  to { transform: translateY(110vh); }
+  to{transform:translateY(110vh);}
 }
 
 </style>
 </head>
+
 <body>
 
 <div class="snow" id="snow"></div>
 
-<div class="card">
+<div class="container">
 
-  <div class="title">🔑 Key hôm nay</div>
+  <div class="title">🔑 Trung Tâm Key Hằng Ngày</div>
 
-  <div id="key" class="keybox">
-    KEY-ABC-999
+  <div class="grid">
+
+    <!-- Liên Quân iOS -->
+    <div class="card">
+      <h3>🍎 Key Liên Quân iOS</h3>
+      <div id="lq_ios" class="keybox"></div>
+      <div id="msg_ios" class="alert"></div>
+      <button onclick="copyKey('ios')">📋 Sao chép key</button>
+    </div>
+
+    <!-- Liên Quân Android -->
+    <div class="card">
+      <h3>🤖 Key Liên Quân Android</h3>
+      <div id="lq_adr" class="keybox"></div>
+      <div id="msg_adr" class="alert"></div>
+      <button onclick="copyKey('adr')">📋 Sao chép key</button>
+    </div>
+
+    <!-- Tốc Chiến Android -->
+    <div class="card">
+      <h3>⚡ Key Tốc Chiến Android</h3>
+      <div id="tc_adr" class="keybox"></div>
+      <div id="msg_tc" class="alert"></div>
+      <button onclick="copyKey('tc')">📋 Sao chép key</button>
+    </div>
+
   </div>
-
-  <div id="msg" class="alert"></div>
-
-  <button onclick="copyKey()">📋 Sao chép key</button>
 
 </div>
 
 <script>
 
-// ==== ADMIN SỬA KEY Ở ĐÂY ====
-const TODAY_KEY = "KEY-ABC-999";
-// =============================
+// ====== ADMIN SỬA KEY TẠI ĐÂY ======
+const KEY_LQ_IOS = "LQ-IOS-123";
+const KEY_LQ_ADR = "LQ-ADR-456";
+const KEY_TC_ADR = "TC-ADR-789";
+// ==================================
 
-document.getElementById("key").innerText = TODAY_KEY;
+document.getElementById("lq_ios").innerText = KEY_LQ_IOS;
+document.getElementById("lq_adr").innerText = KEY_LQ_ADR;
+document.getElementById("tc_adr").innerText = KEY_TC_ADR;
 
 
-// ===== LIMIT 1 MÁY / NGÀY =====
+// ====== GIỚI HẠN 1 LẦN / NGÀY / MỤC ======
+
 let today = new Date().toISOString().slice(0,10);
 
-if(localStorage.getItem("gotKey") === today){
-  alreadyTaken();
-} else {
-  localStorage.setItem("gotKey", today);
-}
+checkLimit("ios","msg_ios","lq_ios");
+checkLimit("adr","msg_adr","lq_adr");
+checkLimit("tc","msg_tc","tc_adr");
 
-function alreadyTaken(){
-  document.getElementById("msg").innerText =
-   "⚠ Bạn đã nhận key hôm nay rồi";
-  document.getElementById("key").classList.add("blur");
-}
-
-
-// ===== Copy key =====
-function copyKey(){
-  if(document.getElementById("key").classList.contains("blur")){
-     alert("Bạn đã lấy key hôm nay rồi.");
-     return;
+function checkLimit(code,msg,key){
+  if(localStorage.getItem("key_"+code) === today){
+    document.getElementById(msg).innerText = "⚠ Bạn đã nhận key hôm nay";
+    document.getElementById(key).classList.add("blur");
+  } else {
+    localStorage.setItem("key_"+code, today);
   }
-  navigator.clipboard.writeText(TODAY_KEY);
+}
+
+
+// ====== COPY ======
+function copyKey(type){
+
+  let key = "";
+  let box = null;
+
+  if(type==="ios"){ key=KEY_LQ_IOS; box="lq_ios"; }
+  if(type==="adr"){ key=KEY_LQ_ADR; box="lq_adr"; }
+  if(type==="tc"){ key=KEY_TC_ADR; box="tc_adr"; }
+
+  if(document.getElementById(box).classList.contains("blur")){
+    alert("Bạn đã lấy key này hôm nay rồi!");
+    return;
+  }
+
+  navigator.clipboard.writeText(key);
   alert("Đã sao chép key!");
 }
 
 
 
-// ===== Chống F12 cơ bản =====
+// ====== Chống F12 cơ bản ======
 document.addEventListener("keydown", e=>{
  if(e.key==="F12" || (e.ctrlKey && e.shiftKey && e.key==="I")){
    e.preventDefault();
@@ -148,20 +205,21 @@ document.addEventListener("keydown", e=>{
  }
 });
 
-// ===== Snow effect =====
+
+// ====== SNOW EFFECT ======
 function createSnow(){
   const snow = document.getElementById("snow");
-  for(let i=0;i<100;i++){
+  for(let i=0;i<130;i++){
     let s = document.createElement("div");
     s.style.position="absolute";
-    s.style.top = "-10px";
-    s.style.left = Math.random()*100+"%";
-    s.style.width = s.style.height = Math.random()*5+2+"px";
+    s.style.top="-10px";
+    s.style.left=Math.random()*100+"%";
+    s.style.width=s.style.height=Math.random()*5+2+"px";
     s.style.background="white";
     s.style.borderRadius="50%";
     s.style.opacity=Math.random();
-    s.style.animation = `fall ${Math.random()*5+5}s linear infinite`;
-    s.style.animationDelay = Math.random()*5+"s";
+    s.style.animation=`fall ${Math.random()*6+5}s linear infinite`;
+    s.style.animationDelay=Math.random()*5+"s";
     snow.appendChild(s);
   }
 }
