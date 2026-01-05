@@ -1,27 +1,172 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Daily Key</title>
+<meta charset="UTF-8">
+<title>Daily Key</title>
 
-  <style>
-    body{font-family:Arial;padding:20px}
-    #key{font-size:24px;font-weight:bold}
-  </style>
+<style>
+
+body{
+  margin:0;
+  background: linear-gradient(135deg,#0f172a,#172554,#020617);
+  font-family: Arial;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  color:white;
+}
+
+/* Snow effect */
+.snow{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  z-index:1;
+}
+
+.card{
+  z-index:2;
+  background: rgba(255,255,255,0.09);
+  border:1px solid rgba(255,255,255,0.15);
+  padding:25px 35px;
+  border-radius:22px;
+  box-shadow:0 20px 40px rgba(0,0,0,0.35);
+  backdrop-filter: blur(12px);
+  text-align:center;
+  max-width:420px;
+}
+
+.title{
+  font-size:24px;
+  margin-bottom:10px;
+}
+
+.keybox{
+  margin-top:15px;
+  font-size:28px;
+  font-weight:bold;
+  padding:12px 15px;
+  background: rgba(0,0,0,0.25);
+  border-radius:14px;
+}
+
+.alert{
+  margin-top:10px;
+  color:#ffbaba;
+}
+
+/* Button */
+button{
+  margin-top:15px;
+  padding:10px 18px;
+  border-radius:14px;
+  border:none;
+  cursor:pointer;
+  background:linear-gradient(135deg,#38bdf8,#2563eb);
+  color:white;
+  font-size:14px;
+  box-shadow:0 10px 20px rgba(0,0,0,0.25);
+}
+
+/* blur */
+.blur{
+  filter:blur(6px);
+}
+
+/* Snow animation styles */
+@keyframes fall {
+  to { transform: translateY(110vh); }
+}
+
+</style>
 </head>
 <body>
 
-<h2>Key hôm nay</h2>
+<div class="snow" id="snow"></div>
 
-<div id="key">ABC123</div>
+<div class="card">
 
-<p>Admin sửa key tại file index.html mỗi ngày</p>
+  <div class="title">🔑 Key hôm nay</div>
+
+  <div id="key" class="keybox">
+    KEY-ABC-999
+  </div>
+
+  <div id="msg" class="alert"></div>
+
+  <button onclick="copyKey()">📋 Sao chép key</button>
+
+</div>
 
 <script>
-// chống F12 mức cơ bản
+
+// ==== ADMIN SỬA KEY Ở ĐÂY ====
+const TODAY_KEY = "KEY-ABC-999";
+// =============================
+
+document.getElementById("key").innerText = TODAY_KEY;
+
+
+// ===== LIMIT 1 MÁY / NGÀY =====
+let today = new Date().toISOString().slice(0,10);
+
+if(localStorage.getItem("gotKey") === today){
+  alreadyTaken();
+} else {
+  localStorage.setItem("gotKey", today);
+}
+
+function alreadyTaken(){
+  document.getElementById("msg").innerText =
+   "⚠ Bạn đã nhận key hôm nay rồi";
+  document.getElementById("key").classList.add("blur");
+}
+
+
+// ===== Copy key =====
+function copyKey(){
+  if(document.getElementById("key").classList.contains("blur")){
+     alert("Bạn đã lấy key hôm nay rồi.");
+     return;
+  }
+  navigator.clipboard.writeText(TODAY_KEY);
+  alert("Đã sao chép key!");
+}
+
+
+
+// ===== Chống F12 cơ bản =====
 document.addEventListener("keydown", e=>{
- if(e.key==="F12") e.preventDefault();
+ if(e.key==="F12" || (e.ctrlKey && e.shiftKey && e.key==="I")){
+   e.preventDefault();
+   alert("Chức năng này bị hạn chế");
+ }
 });
+
+// ===== Snow effect =====
+function createSnow(){
+  const snow = document.getElementById("snow");
+  for(let i=0;i<100;i++){
+    let s = document.createElement("div");
+    s.style.position="absolute";
+    s.style.top = "-10px";
+    s.style.left = Math.random()*100+"%";
+    s.style.width = s.style.height = Math.random()*5+2+"px";
+    s.style.background="white";
+    s.style.borderRadius="50%";
+    s.style.opacity=Math.random();
+    s.style.animation = `fall ${Math.random()*5+5}s linear infinite`;
+    s.style.animationDelay = Math.random()*5+"s";
+    snow.appendChild(s);
+  }
+}
+createSnow();
+
 </script>
 
 </body>
