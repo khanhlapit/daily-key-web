@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>TỦN KEY FREEr</title>
+<title>Daily Key Center</title>
 
 <style>
 
@@ -18,13 +18,10 @@ body{
   color:white;
 }
 
-/* Snow effect */
+/* Snow */
 .snow{
   position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
+  inset:0;
   pointer-events:none;
   z-index:1;
 }
@@ -45,7 +42,14 @@ body{
 .title{
   text-align:center;
   font-size:28px;
-  margin-bottom:20px;
+  margin-bottom:5px;
+}
+
+.time{
+  text-align:center;
+  font-size:15px;
+  opacity:.9;
+  margin-bottom:15px;
 }
 
 .grid{
@@ -98,8 +102,7 @@ button{
   .grid{grid-template-columns:1fr}
 }
 
-
-/* Snow animation */
+/* Snow anim */
 @keyframes fall {
   to{transform:translateY(110vh);}
 }
@@ -115,9 +118,11 @@ button{
 
   <div class="title">🔑 Trung Tâm Key Hằng Ngày</div>
 
+  <!-- HIỂN THỊ NGÀY GIỜ -->
+  <div id="time" class="time"></div>
+
   <div class="grid">
 
-    <!-- Liên Quân iOS -->
     <div class="card">
       <h3>🍎 Key Liên Quân iOS</h3>
       <div id="lq_ios" class="keybox"></div>
@@ -125,7 +130,6 @@ button{
       <button onclick="copyKey('ios')">📋 Sao chép key</button>
     </div>
 
-    <!-- Liên Quân Android -->
     <div class="card">
       <h3>🤖 Key Liên Quân Android</h3>
       <div id="lq_adr" class="keybox"></div>
@@ -133,7 +137,6 @@ button{
       <button onclick="copyKey('adr')">📋 Sao chép key</button>
     </div>
 
-    <!-- Tốc Chiến Android -->
     <div class="card">
       <h3>⚡ Key Tốc Chiến Android</h3>
       <div id="tc_adr" class="keybox"></div>
@@ -147,19 +150,38 @@ button{
 
 <script>
 
-// ====== ADMIN SỬA KEY TẠI ĐÂY ======
+// ====== ADMIN SỬA KEY ======
 const KEY_LQ_IOS = "LQ-IOS-123";
 const KEY_LQ_ADR = "LQ-ADR-456";
 const KEY_TC_ADR = "TC-ADR-789";
-// ==================================
+// ===========================
 
-document.getElementById("lq_ios").innerText = KEY_LQ_IOS;
-document.getElementById("lq_adr").innerText = KEY_LQ_ADR;
-document.getElementById("tc_adr").innerText = KEY_TC_ADR;
+lq_ios.innerText = KEY_LQ_IOS;
+lq_adr.innerText = KEY_LQ_ADR;
+tc_adr.innerText = KEY_TC_ADR;
 
 
-// ====== GIỚI HẠN 1 LẦN / NGÀY / MỤC ======
+// ====== NGÀY GIỜ REALTIME ======
+function updateTime(){
+  const now = new Date();
 
+  const d = now.toLocaleDateString("vi-VN",{
+    weekday:"long",
+    day:"2-digit",
+    month:"2-digit",
+    year:"numeric"
+  });
+
+  const t = now.toLocaleTimeString("vi-VN");
+
+  time.innerText = `📅 ${d} — 🕒 ${t}`;
+}
+
+setInterval(updateTime,1000);
+updateTime();
+
+
+// ====== LIMIT 1 NGÀY / 1 MỤC ======
 let today = new Date().toISOString().slice(0,10);
 
 checkLimit("ios","msg_ios","lq_ios");
@@ -179,8 +201,7 @@ function checkLimit(code,msg,key){
 // ====== COPY ======
 function copyKey(type){
 
-  let key = "";
-  let box = null;
+  let key="", box="";
 
   if(type==="ios"){ key=KEY_LQ_IOS; box="lq_ios"; }
   if(type==="adr"){ key=KEY_LQ_ADR; box="lq_adr"; }
@@ -197,20 +218,63 @@ function copyKey(type){
 
 
 
-// ====== Chống F12 cơ bản ======
+// ==================
+//  CHỐNG DEVTOOLS
+// ==================
+
+// chặn F12 / Ctrl+U / Inspect
 document.addEventListener("keydown", e=>{
- if(e.key==="F12" || (e.ctrlKey && e.shiftKey && e.key==="I")){
-   e.preventDefault();
-   alert("Chức năng này bị hạn chế");
- }
+  if(
+    e.key==="F12" ||
+    (e.ctrlKey && e.shiftKey && e.key==="I") ||
+    (e.ctrlKey && e.shiftKey && e.key==="C") ||
+    (e.ctrlKey && e.key==="U")
+  ){
+    e.preventDefault();
+    alert("Chức năng này bị hạn chế");
+  }
 });
 
+// chặn chuột phải
+document.addEventListener("contextmenu", e=>{
+  e.preventDefault();
+});
 
-// ====== SNOW EFFECT ======
+// phát hiện DevTools mở
+let devtoolsOpen = false;
+
+setInterval(()=>{
+  const w = window.outerWidth - window.innerWidth;
+  const h = window.outerHeight - window.innerHeight;
+
+  if(w > 200 || h > 200){
+    if(!devtoolsOpen){
+      devtoolsOpen = true;
+      hideKeys();
+    }
+  } else devtoolsOpen = false;
+
+}, 500);
+
+function hideKeys(){
+  lq_ios.innerText = "#######";
+  lq_adr.innerText = "#######";
+  tc_adr.innerText = "#######";
+
+  lq_ios.classList.add("blur");
+  lq_adr.classList.add("blur");
+  tc_adr.classList.add("blur");
+
+  alert("Đã phát hiện Developer Tools!");
+}
+
+
+
+// ====== SNOW ======
 function createSnow(){
   const snow = document.getElementById("snow");
-  for(let i=0;i<130;i++){
-    let s = document.createElement("div");
+  for(let i=0;i<120;i++){
+    let s=document.createElement("div");
     s.style.position="absolute";
     s.style.top="-10px";
     s.style.left=Math.random()*100+"%";
