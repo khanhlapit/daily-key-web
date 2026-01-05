@@ -182,20 +182,7 @@ updateTime();
 
 
 // ====== LIMIT 1 NGÀY / 1 MỤC ======
-let today = new Date().toISOString().slice(0,10);
 
-checkLimit("ios","msg_ios","lq_ios");
-checkLimit("adr","msg_adr","lq_adr");
-checkLimit("tc","msg_tc","tc_adr");
-
-function checkLimit(code,msg,key){
-  if(localStorage.getItem("key_"+code) === today){
-    document.getElementById(msg).innerText = "⚠ Bạn đã nhận key hôm nay";
-    document.getElementById(key).classList.add("blur");
-  } else {
-    localStorage.setItem("key_"+code, today);
-  }
-}
 
 
 // ====== COPY ======
@@ -293,6 +280,7 @@ createSnow();
 
 </body>
 </html>
+
 
 
 
